@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chain Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            color: #263b5e;
+        }
+
+        a, button {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            color: white;
+        }
+
+        .add {
+            background: #198754;
+        }
+
+        .edit {
+            background: #0d6efd;
+        }
+
+        .delete {
+            background: #dc3545;
+        }
+
+        .filter {
+            margin: 20px 0;
+        }
+
+        select {
+            padding: 9px;
+            margin-right: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #263b5e;
+            color: white;
+        }
+
+        .success {
+            color: green;
+            margin: 12px 0;
+        }
+
+        .error {
+            color: red;
+            margin: 12px 0;
+        }
+
+        form.inline {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Chain Management System</h1>
+
+    <p class="success"
+       th:if="${successMessage}"
+       th:text="${successMessage}"></p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}"></p>
+
+    <a th:href="@{/chains/new}" class="add">+ Add Company</a>
+
+    <div class="filter">
+        <form th:action="@{/chains}" method="get">
+            <label>Filter by Group:</label>
+
+            <select name="groupId">
+                <option value="">All Groups</option>
+
+                <option th:each="group : ${groups}"
+                        th:value="${group.groupId}"
+                        th:text="${group.groupName}"
+                        th:selected="${selectedGroupId != null and selectedGroupId == group.groupId}">
+                </option>
+            </select>
+
+            <button type="submit" class="edit">Filter</button>
+            <a th:href="@{/chains}" class="edit">Clear</a>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Company Name</th>
+            <th>GST Number</th>
+            <th>Group</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="chain : ${chains}">
+            <td th:text="${chain.chainId}"></td>
+            <td th:text="${chain.companyName}"></td>
+            <td th:text="${chain.gstnNo}"></td>
+            <td th:text="${chain.group.groupName}"></td>
+
+            <td>
+                <a th:href="@{/chains/{id}/edit(id=${chain.chainId})}"
+                   class="edit">Edit</a>
+
+                <form class="inline"
+                      th:action="@{/chains/{id}/delete(id=${chain.chainId})}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to deactivate this company?');">
+
+                    <button type="submit" class="delete">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(chains)}">
+            <td colspan="5">No companies found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
