@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            margin: 0;
+            padding: 30px;
+            color: #243047;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .card {
+            background: white;
+            padding: 24px;
+            margin-bottom: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+        h1 { color: #2457c5; }
+        input, button {
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        input {
+            border: 1px solid #ccd3df;
+            width: 65%;
+        }
+        button {
+            background: #2457c5;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e9f0;
+        }
+        th { background: #eef3ff; }
+        .success { color: #16803c; }
+        .error { color: #c62828; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Group Management System</h1>
+    <p>Manage your groups in one place.</p>
+
+    <div class="card">
+        <h2>Create New Group</h2>
+
+        <p class="success" th:if="${success}" th:text="${success}"></p>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form action="/groups" method="post">
+            <input type="text" name="groupName"
+                   placeholder="Enter group name" required>
+            <button type="submit">Create Group</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>All Groups</h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Action</th>
+                <th>ID</th>
+                <th>Group Name</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="group : ${groups}">
+                <td>
+                    <form th:action="@{/groups/delete/{id}(id=${group.groupId})}"
+                          method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this group?');">
+                        <button type="submit"
+                                style="background-color: #dc3545;">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+                <td th:text="${group.groupId}"></td>
+
+                <td>
+                    <form th:action="@{/groups/update/{id}(id=${group.groupId})}"
+                          method="post">
+                        <input type="text"
+                               name="groupName"
+                               th:value="${group.groupName}"
+                               required>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+
+                <td>
+                    <span th:text="${group.isActive ? 'Active' : 'Inactive'}"></span>
+
+                    <form th:action="@{/groups/toggle/{id}(id=${group.groupId})}"
+                          method="post"
+                          style="display: inline;">
+                        <button type="submit"
+                                th:text="${group.isActive ? 'Deactivate' : 'Activate'}">
+                        </button>
+                    </form>
+                </td>
+
+
+
+                <td th:text="${group.createdAt}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(groups)}">
+                <td colspan="5">No groups created yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
