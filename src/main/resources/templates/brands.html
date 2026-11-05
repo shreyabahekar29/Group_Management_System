@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Brand Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            color: #263b5e;
+        }
+
+        a, button {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            color: white;
+        }
+
+        .add {
+            background: #198754;
+        }
+
+        .edit {
+            background: #0d6efd;
+        }
+
+        .delete {
+            background: #dc3545;
+        }
+
+        .filter {
+            margin: 20px 0;
+        }
+
+        select {
+            padding: 9px;
+            margin-right: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #263b5e;
+            color: white;
+        }
+
+        .success {
+            color: green;
+            margin: 12px 0;
+        }
+
+        .error {
+            color: red;
+            margin: 12px 0;
+        }
+
+        .active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: red;
+            font-weight: bold;
+        }
+
+        form.inline {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Brand Management System</h1>
+
+    <p class="success"
+       th:if="${successMessage}"
+       th:text="${successMessage}"></p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}"></p>
+
+    <a th:href="@{/brands/new}" class="add">
+        + Add Brand
+    </a>
+
+    <div class="filter">
+        <form th:action="@{/brands}" method="get">
+
+            <label>Filter by Company:</label>
+
+            <select name="chainId">
+                <option value="">All Companies</option>
+
+                <option th:each="chain : ${chains}"
+                        th:value="${chain.chainId}"
+                        th:text="${chain.companyName}"
+                        th:selected="${selectedChainId != null and selectedChainId == chain.chainId}">
+                </option>
+            </select>
+
+            <label>Filter by Group:</label>
+
+            <select name="groupId">
+                <option value="">All Groups</option>
+
+                <option th:each="group : ${groups}"
+                        th:value="${group.groupId}"
+                        th:text="${group.groupName}"
+                        th:selected="${selectedGroupId != null and selectedGroupId == group.groupId}">
+                </option>
+            </select>
+
+            <button type="submit" class="edit">
+                Filter
+            </button>
+
+            <a th:href="@{/brands}" class="edit">
+                Clear
+            </a>
+
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Brand Name</th>
+            <th>Company Name</th>
+            <th>Group Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="brand : ${brands}">
+
+            <td th:text="${brand.brandId}"></td>
+
+            <td th:text="${brand.brandName}"></td>
+
+            <td th:text="${brand.chain.companyName}"></td>
+
+            <td th:text="${brand.chain.group.groupName}"></td>
+
+            <td>
+                <span th:if="${brand.isActive}"
+                      class="active">Active</span>
+
+                <span th:unless="${brand.isActive}"
+                      class="inactive">Inactive</span>
+            </td>
+
+            <td>
+                <a th:href="@{/brands/{id}/edit(id=${brand.brandId})}"
+                   class="edit">Edit</a>
+
+                <form class="inline"
+                      th:action="@{/brands/{id}/delete(id=${brand.brandId})}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to deactivate this brand?');">
+
+                    <button type="submit" class="delete">
+                        Delete
+                    </button>
+
+                </form>
+            </td>
+
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(brands)}">
+            <td colspan="6">No brands found.</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
