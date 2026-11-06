@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Zone Form</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #263238;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #1976d2;
+            text-decoration: none;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 th:text="${zone.zoneId == null ? 'Add New Zone' : 'Edit Zone'}">
+        Add New Zone
+    </h1>
+
+    <p class="error" th:if="${errorMessage}"
+       th:text="${errorMessage}"></p>
+
+    <form th:object="${zone}"
+          th:action="${zone.zoneId == null}
+                     ? @{/zones}
+                     : @{/zones/{id}(id=${zone.zoneId})}"
+          method="post">
+
+        <label>Zone Name</label>
+
+        <input type="text"
+               th:field="*{zoneName}"
+               placeholder="Enter Zone Name"
+               maxlength="50"
+               required>
+
+        <label>Select Brand</label>
+
+        <select name="brandId" required>
+
+            <option value="">-- Select Brand --</option>
+
+            <option th:each="brand : ${brands}"
+                    th:value="${brand.brandId}"
+                    th:text="${brand.brandName}"
+                    th:selected="${zone.brand != null and zone.brand.brandId == brand.brandId}">
+            </option>
+
+        </select>
+
+        <button type="submit"
+                th:text="${zone.zoneId == null ? 'Save Zone' : 'Update Zone'}">
+            Save Zone
+        </button>
+
+    </form>
+
+    <a th:href="@{/zones}" class="back">
+        Back to Zone Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
