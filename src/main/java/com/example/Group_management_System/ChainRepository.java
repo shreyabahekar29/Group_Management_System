@@ -12,4 +12,5 @@ public interface ChainRepository extends JpaRepository<Chain, Integer> {
 
     List<Chain> findByIsActiveTrue();
     boolean existsByGstnNoAndChainIdNot(String gstnNo, Integer chainId);
+
 }

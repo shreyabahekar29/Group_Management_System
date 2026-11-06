@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estimate Form</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #263b5e;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 22px;
+            padding: 12px 20px;
+            background: #263b5e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .back {
+            display: inline-block;
+            margin-left: 10px;
+            color: #263b5e;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2 th:text="${estimate.estimateId == null ? 'Add Estimate' : 'Edit Estimate'}">
+        Add Estimate
+    </h2>
+
+    <form th:object="${estimate}"
+          th:action="${estimate.estimateId == null}
+              ? @{/estimates/save}
+              : @{/estimates/update/{id}(id=${estimate.estimateId})}"
+          method="post">
+
+        <label>Select Group</label>
+        <select name="groupId" id="groupId" required>
+            <option value="">-- Select Group --</option>
+            <option th:each="g : ${groups}"
+                    th:value="${g.groupId}"
+                    th:text="${g.groupName}"
+                    th:selected="${selectedGroupId != null and selectedGroupId == g.groupId}">
+            </option>
+        </select>
+
+        <label>Select Chain / Company</label>
+        <select name="chainId" id="chainId" required>
+            <option value="">-- Select Chain --</option>
+            <option th:each="c : ${chains}"
+                    th:value="${c.chainId}"
+                    th:text="${c.companyName}"
+                    th:selected="${estimate.chain != null and estimate.chain.chainId == c.chainId}">
+            </option>
+        </select>
+
+        <label>Select Brand</label>
+        <select name="brandId" id="brandId" required>
+            <option value="">-- Select Brand --</option>
+            <option th:each="b : ${brands}"
+                    th:value="${b.brandId}"
+                    th:text="${b.brandName}">
+            </option>
+        </select>
+
+        <label>Select Zone</label>
+        <select name="zoneId" id="zoneId" required>
+            <option value="">-- Select Zone --</option>
+            <option th:each="z : ${zones}"
+                    th:value="${z.zoneId}"
+                    th:text="${z.zoneName}">
+            </option>
+        </select>
+
+        <label>Service Provider / Service Details</label>
+        <input type="text"
+               th:field="*{service}"
+               placeholder="Enter service details"
+               required>
+
+        <label>Total Quantity</label>
+        <input type="number"
+               id="qty"
+               th:field="*{qty}"
+               min="1"
+               required>
+
+        <label>Cost Per Unit</label>
+        <input type="number"
+               id="costPerUnit"
+               th:field="*{costPerUnit}"
+               min="0"
+               step="0.01"
+               required>
+
+        <label>Estimated Amount</label>
+        <input type="number"
+               id="totalCost"
+               th:field="*{totalCost}"
+               step="0.01"
+               readonly>
+
+        <label>Expected Delivery Date</label>
+        <input type="date" th:field="*{deliveryDate}">
+
+        <label>Other Delivery Details</label>
+        <textarea th:field="*{deliveryDetails}"
+                  rows="4"
+                  placeholder="Enter delivery details"></textarea>
+
+        <button type="submit">Save Estimate</button>
+
+        <a class="back" th:href="@{/estimates}">Back</a>
+
+    </form>
+
+</div>
+
+<script>
+    const qty = document.getElementById("qty");
+    const cost = document.getElementById("costPerUnit");
+    const total = document.getElementById("totalCost");
+
+    function calculateTotal() {
+        const quantity = Number(qty.value);
+        const unitCost = Number(cost.value);
+
+        total.value = (quantity > 0 && unitCost >= 0)
+            ? (quantity * unitCost).toFixed(2)
+            : "";
+    }
+
+    qty.addEventListener("input", calculateTotal);
+    cost.addEventListener("input", calculateTotal);
+
+    calculateTotal();
+</script>
+
+</body>
+</html>

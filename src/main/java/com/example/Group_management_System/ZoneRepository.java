@@ -10,5 +10,5 @@ public interface ZoneRepository extends JpaRepository<Zone, Integer> {
 
     // Display only active zones
     List<Zone> findByIsActiveTrue();
-
+    List<Zone> findByBrand_BrandIdAndIsActiveTrue(Integer brandId);
 }
