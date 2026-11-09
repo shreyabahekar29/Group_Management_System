@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Invoice</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #263b60;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button, .back {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background: #263b60;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Generate Invoice</h1>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
+    </p>
+
+    <form th:action="@{/invoices/save}"
+          method="post">
+
+        <label>Select Estimate:</label>
+
+        <select name="estimateId" required>
+            <option value="">-- Select Estimate --</option>
+
+            <option th:each="estimate : ${estimates}"
+                    th:value="${estimate.estimateId}"
+                    th:text="${'Estimate ID: ' + estimate.estimateId
+                    + ' | Service: ' + estimate.service
+                    + ' | Total: ' + estimate.totalCost}">
+            </option>
+        </select>
+
+        <label>Amount Paid:</label>
+
+        <input type="number"
+               name="amountPaid"
+               step="0.01"
+               min="0"
+               placeholder="Enter amount paid"
+               required>
+
+        <label>Customer Email:</label>
+
+        <input type="email"
+               name="emailId"
+               maxlength="50"
+               placeholder="Enter customer email"
+               required>
+
+        <button type="submit">
+            Generate Invoice
+        </button>
+
+        <a th:href="@{/invoices}" class="back">
+            Back
+        </a>
+
+    </form>
+
+</div>
+
+</body>
+</html>

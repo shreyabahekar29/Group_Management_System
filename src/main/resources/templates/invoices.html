@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #263b60;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 1200px;
+            margin: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #263b60;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #263b60;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        .success {
+            color: green;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Invoice Management</h1>
+
+    <p class="success"
+       th:if="${successMessage}"
+       th:text="${successMessage}">
+    </p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
+    </p>
+
+    <a th:href="@{/invoices/new}" class="btn">
+        + Generate New Invoice
+    </a>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Invoice No</th>
+            <th>Estimate ID</th>
+            <th>Company Name</th>
+            <th>Service</th>
+            <th>Quantity</th>
+            <th>Amount Payable</th>
+            <th>Amount Paid</th>
+            <th>Balance</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="invoice : ${invoices}">
+            <td th:text="${invoice.invoiceNo}"></td>
+
+            <td th:text="${invoice.estimate.estimateId}"></td>
+
+            <td th:text="${invoice.chain.companyName}"></td>
+
+            <td th:text="${invoice.serviceDetails}"></td>
+
+            <td th:text="${invoice.qty}"></td>
+
+            <td th:text="${invoice.amountPayable}"></td>
+
+            <td th:text="${invoice.amountPaid}"></td>
+
+            <td th:text="${invoice.balance}"></td>
+
+            <td th:text="${invoice.emailId}"></td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(invoices)}">
+            <td colspan="9">No invoices available.</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
